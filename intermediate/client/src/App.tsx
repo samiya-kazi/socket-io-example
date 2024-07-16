@@ -3,6 +3,7 @@ import "./App.css";
 import { socket } from "./utils/socket";
 import Chatroom from "./Components/Chatroom";
 import { IRoom } from "./interfaces/room.interface";
+import { IMessage } from "./interfaces/message.interface";
 
 const initialRooms = [
   {
@@ -22,64 +23,95 @@ const initialRooms = [
 function App() {
   const [connected, setConnected] = useState(false);
   const [rooms, setRooms] = useState<IRoom[]>(initialRooms);
-
+  const [username, setUsername] = useState<string>("");
 
   function handleConnect() {
     socket.connect();
   }
 
-
   socket.on("me", () => {
     setConnected(true);
   });
 
-
   socket.on("join-room-success", (data: { roomId: string }) => {
     const updatedRooms = rooms.map((room) =>
       room.id === data.roomId
-        ? { ...room, joined: true, messages: [...room.messages, "Joined room."] }
+        ? {
+            ...room,
+            joined: true,
+            messages: [
+              ...room.messages,
+              {
+                content: "You joined the room.",
+                sender: "system",
+                timestamp: new Date(),
+                type: "join",
+              },
+            ],
+          }
         : room
     );
     setRooms(updatedRooms);
   });
-
 
   socket.on("leave-room-success", (data: { roomId: string }) => {
     const updatedRooms = rooms.map((room) =>
       room.id === data.roomId
-        ? { ...room, joined: false, messages: [...room.messages, "Left room."] }
+        ? {
+            ...room,
+            joined: false,
+            messages: [
+              ...room.messages,
+              {
+                content: "You left the room.",
+                sender: "system",
+                timestamp: new Date(),
+                type: "leave",
+              },
+            ],
+          }
         : room
     );
     setRooms(updatedRooms);
   });
 
-
-  socket.on("new-message", (data: { roomId: string; message: string }) => {
+  socket.on("new-message", (data: { roomId: string; message: IMessage }) => {
     addMessage(data);
   });
 
-
-  function addMessage(data: { roomId: string; message: string }) {
+  function addMessage(data: { roomId: string; message: IMessage }) {
     const updatedRooms = rooms.map((room) =>
       room.id === data.roomId ? { ...room, messages: [...room.messages, data.message] } : room
     );
     setRooms(updatedRooms);
   }
 
-
   return (
     <>
       {connected ? (
         <div className="page-container">
           {rooms.map((room) => (
-            <Chatroom key={room.id} roomData={room} addMessage={addMessage} />
+            <Chatroom key={room.id} roomData={room} addMessage={addMessage} username={username} />
           ))}
         </div>
       ) : (
-        <div className="page-container">
-          <button id="connect-btn" onClick={handleConnect}>
-            Connect to Server
-          </button>
+        <div className="page-container connect-screen">
+          <div>
+            <div className="username-field">
+              <label htmlFor="username">Enter Username </label>
+              <input
+                className="username-field"
+                id="username"
+                name="username"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <button id="connect-btn" onClick={handleConnect}>
+              Connect to Server
+            </button>
+          </div>
         </div>
       )}
     </>
