@@ -40,8 +40,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave-room", (data: { roomId: string }) => {
-    socket.leave(data.roomId);
     socket.emit('leave-room-success', { roomId: data.roomId });
+    socket.leave(data.roomId);
   });
 
   socket.on("send-message", (data: { roomId: string, message: string }) => {
