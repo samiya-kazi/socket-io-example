@@ -17,6 +17,9 @@ The simple example is a application where the client shows different inspiration
 ## Intermediate Example
 The intermediate exmaple is a chatroom like application where the user first has to give a username and then connect to the server. Once connected, they can join chatrooms and chat with whoever else is connected to them. To fully test this example, open the client on two different browsers and chat in the same room.
 
+![Intermediate Example](img/intermediate-exmaple-client.gif)
+
+
 ## Get Started
 Here are the steps to run either of the examples:
 
