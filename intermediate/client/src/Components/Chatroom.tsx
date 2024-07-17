@@ -67,7 +67,7 @@ function Chatroom({
 
         <form className='input-form' onSubmit={handleSendMessage}>
           <input value={message} onChange={(e) => setMessage(e.target.value)} disabled={!roomData.joined} />
-          <button disabled={message.length === 0}>Send</button>
+          <button className="send-btn" disabled={message.length === 0 || !roomData.joined}>Send</button>
         </form>
 
     </div>

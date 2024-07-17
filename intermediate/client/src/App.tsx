@@ -108,7 +108,7 @@ function App() {
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
-            <button id="connect-btn" onClick={handleConnect}>
+            <button id="connect-btn" onClick={handleConnect} disabled={username.length === 0}>
               Connect to Server
             </button>
           </div>
